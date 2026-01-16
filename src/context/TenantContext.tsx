@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { Tenant, TenantSubscription, TenantUser } from '../types';
-import { loadData, saveData, generateId, generateSlug } from '../data/mockData';
+import { loadData, saveData, generateSlug } from '../data/mockData';
 import type { AppData } from '../data/mockData';
 import { db, auth } from '../firebase/firebase';
 import {
