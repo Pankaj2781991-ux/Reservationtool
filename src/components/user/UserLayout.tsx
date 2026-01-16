@@ -2,6 +2,7 @@ import { NavLink, Outlet, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useTenant } from '../../context/TenantContext';
 import { useAuth } from '../../context/AuthContext';
+import { ThemeToggle } from '../common/ThemeToggle';
 import './UserLayout.css';
 
 export function UserLayout() {
@@ -46,6 +47,7 @@ export function UserLayout() {
                     </nav>
 
                     <div className="header-actions">
+                        <ThemeToggle />
                         {isCustomer ? (
                             <button className="auth-link" onClick={signOut}>
                                 Sign Out

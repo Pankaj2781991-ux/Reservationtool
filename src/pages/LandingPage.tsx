@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useTenant } from '../context/TenantContext';
 import { useAuth } from '../context/AuthContext';
+import { ThemeToggle } from '../components/common/ThemeToggle';
 import './LandingPage.css';
 
 export function LandingPage() {
@@ -193,6 +194,7 @@ export function LandingPage() {
                     <nav className="landing-nav">
                         <a href="#features">Features</a>
                         <a href="#demo">Demo</a>
+                        <ThemeToggle />
                         <button
                             className="btn btn-secondary"
                             onClick={() => {
