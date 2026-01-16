@@ -59,7 +59,7 @@ export function MyBookingsPage() {
         return <div className="loading">Loading...</div>;
     }
 
-    const hasCustomerAccess = session?.role === 'customer' && session.tenantId === currentTenant.id;
+    const hasCustomerAccess = currentTenant.isDemo || (session?.role === 'customer' && session.tenantId === currentTenant.id);
     if (!hasCustomerAccess) {
         return (
             <div className="my-bookings-page">

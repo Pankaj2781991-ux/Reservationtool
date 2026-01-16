@@ -46,6 +46,7 @@ export function TenantProvider({ children }: { children: ReactNode }) {
                         ...data,
                         id: docSnap.id,
                         createdAt: data.createdAt ? new Date(data.createdAt) : new Date(),
+                        isDemo: data.isDemo ?? false,
                     } as Tenant;
                 });
 

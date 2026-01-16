@@ -25,7 +25,7 @@ export function UserLayout() {
     }
 
     const basePath = `/tenant/${tenantSlug}`;
-    const isCustomer = session?.role === 'customer' && session.tenantId === currentTenant.id;
+    const isCustomer = currentTenant.isDemo || (session?.role === 'customer' && session.tenantId === currentTenant.id);
 
     return (
         <div className="user-layout" style={{ '--tenant-color': currentTenant.settings.primaryColor } as React.CSSProperties}>

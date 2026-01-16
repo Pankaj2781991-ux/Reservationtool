@@ -11,6 +11,7 @@ export interface Tenant {
   createdAt: Date;
   ownerUserId: string;
   subscription: TenantSubscription;
+  isDemo?: boolean;
   settings: TenantSettings;
 }
 

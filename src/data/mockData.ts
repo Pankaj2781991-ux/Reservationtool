@@ -20,6 +20,7 @@ const defaultTenants: Tenant[] = [
             plan: 'pro',
             currentPeriodEnd: '2026-02-01',
         },
+        isDemo: true,
         settings: {
             primaryColor: '#8B5CF6',
             slotDuration: 60,
@@ -44,6 +45,7 @@ const defaultTenants: Tenant[] = [
             plan: 'starter',
             currentPeriodEnd: '2026-01-25',
         },
+        isDemo: true,
         settings: {
             primaryColor: '#10B981',
             slotDuration: 30,
@@ -68,6 +70,7 @@ const defaultTenants: Tenant[] = [
             plan: 'starter',
             currentPeriodEnd: '2026-02-10',
         },
+        isDemo: true,
         settings: {
             primaryColor: '#F59E0B',
             slotDuration: 45,

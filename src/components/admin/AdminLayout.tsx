@@ -25,7 +25,7 @@ export function AdminLayout() {
         );
     }
 
-    const hasAdminAccess = session?.role === 'admin' && session.tenantId === currentTenant.id;
+    const hasAdminAccess = currentTenant.isDemo || (session?.role === 'admin' && session.tenantId === currentTenant.id);
     if (!hasAdminAccess) {
         return (
             <div className="admin-loading admin-access-required">
