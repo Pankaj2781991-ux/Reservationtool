@@ -25,7 +25,9 @@ export function AdminLayout() {
         );
     }
 
-    const hasAdminAccess = currentTenant.isDemo || (session?.role === 'admin' && session.tenantId === currentTenant.id);
+    const demoSlugs = ['demo-salon', 'dr-smith-clinic', 'fitness-pro'];
+    const isDemoTenant = currentTenant.isDemo || (tenantSlug ? demoSlugs.includes(tenantSlug) : false);
+    const hasAdminAccess = isDemoTenant || (session?.role === 'admin' && session.tenantId === currentTenant.id);
     if (!hasAdminAccess) {
         return (
             <div className="admin-loading admin-access-required">
