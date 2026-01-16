@@ -1,7 +1,16 @@
-import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { Tenant, TenantSubscription } from '../types';
+import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import type { Tenant, TenantSubscription, TenantUser } from '../types';
 import { loadData, saveData, generateId, generateSlug } from '../data/mockData';
 import type { AppData } from '../data/mockData';
+import { db, auth } from '../firebase/firebase';
+import {
+    collection,
+    getDocs,
+    doc,
+    setDoc,
+    addDoc,
+} from 'firebase/firestore';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
 
 interface TenantContextType {
     currentTenant: Tenant | null;
@@ -10,7 +19,7 @@ interface TenantContextType {
     createTenant: (data: Omit<Tenant, 'id' | 'slug' | 'createdAt' | 'settings' | 'subscription' | 'ownerUserId'> & {
         ownerName: string;
         ownerPassword: string;
-    }) => Tenant;
+    }) => Promise<Tenant>;
     appData: AppData;
     updateAppData: (updater: (data: AppData) => AppData) => void;
 }
@@ -25,15 +34,55 @@ export function TenantProvider({ children }: { children: ReactNode }) {
         saveData(appData);
     }, [appData]);
 
+    useEffect(() => {
+        const loadRemoteData = async () => {
+            try {
+                const tenantsSnapshot = await getDocs(collection(db, 'tenants'));
+                const usersSnapshot = await getDocs(collection(db, 'users'));
+
+                const tenants = tenantsSnapshot.docs.map((docSnap) => {
+                    const data = docSnap.data() as Omit<Tenant, 'id' | 'createdAt'> & { createdAt?: string };
+                    return {
+                        ...data,
+                        id: docSnap.id,
+                        createdAt: data.createdAt ? new Date(data.createdAt) : new Date(),
+                    } as Tenant;
+                });
+
+                const users = usersSnapshot.docs.map((docSnap) => {
+                    const data = docSnap.data() as Omit<TenantUser, 'id' | 'createdAt'> & { createdAt?: string };
+                    return {
+                        ...data,
+                        id: docSnap.id,
+                        createdAt: data.createdAt ? new Date(data.createdAt) : new Date(),
+                        password: '',
+                    } as TenantUser;
+                });
+
+                if (tenants.length > 0) {
+                    setAppData((prev) => ({
+                        ...prev,
+                        tenants,
+                        users: users.length > 0 ? users : prev.users,
+                    }));
+                }
+            } catch (error) {
+                console.error('Failed to load Firestore data:', error);
+            }
+        };
+
+        loadRemoteData();
+    }, []);
+
     const setCurrentTenantBySlug = (slug: string) => {
         const tenant = appData.tenants.find((t) => t.slug === slug) || null;
         setCurrentTenant(tenant);
     };
 
-    const createTenant = (data: Omit<Tenant, 'id' | 'slug' | 'createdAt' | 'settings' | 'subscription' | 'ownerUserId'> & {
+    const createTenant = async (data: Omit<Tenant, 'id' | 'slug' | 'createdAt' | 'settings' | 'subscription' | 'ownerUserId'> & {
         ownerName: string;
         ownerPassword: string;
-    }): Tenant => {
+    }): Promise<Tenant> => {
         const { ownerName, ownerPassword, ...tenantData } = data;
         const baseSlug = generateSlug(tenantData.businessName);
         const uniqueSlug = (() => {
@@ -51,12 +100,13 @@ export function TenantProvider({ children }: { children: ReactNode }) {
             currentPeriodEnd: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
         };
 
-        const ownerUserId = generateId();
-        const newTenant: Tenant = {
+        const ownerCredential = await createUserWithEmailAndPassword(auth, tenantData.email, ownerPassword);
+        const ownerUserId = ownerCredential.user.uid;
+
+        const tenantPayload = {
             ...tenantData,
-            id: generateId(),
             slug: uniqueSlug,
-            createdAt: new Date(),
+            createdAt: new Date().toISOString(),
             ownerUserId,
             subscription,
             settings: {
@@ -69,6 +119,27 @@ export function TenantProvider({ children }: { children: ReactNode }) {
             },
         };
 
+        const tenantDoc = await addDoc(collection(db, 'tenants'), tenantPayload);
+
+        await setDoc(doc(db, 'users', ownerUserId), {
+            tenantId: tenantDoc.id,
+            role: 'admin',
+            name: ownerName,
+            email: tenantData.email,
+            phone: tenantData.phone,
+            createdAt: new Date().toISOString(),
+        });
+
+        const newTenant: Tenant = {
+            ...tenantData,
+            id: tenantDoc.id,
+            slug: uniqueSlug,
+            createdAt: new Date(),
+            ownerUserId,
+            subscription,
+            settings: tenantPayload.settings,
+        };
+
         setAppData((prev) => ({
             ...prev,
             tenants: [...prev.tenants, newTenant],
@@ -76,7 +147,7 @@ export function TenantProvider({ children }: { children: ReactNode }) {
                 ...prev.users,
                 {
                     id: ownerUserId,
-                    tenantId: newTenant.id,
+                    tenantId: tenantDoc.id,
                     role: 'admin',
                     name: ownerName,
                     email: tenantData.email,

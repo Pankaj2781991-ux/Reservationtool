@@ -67,7 +67,7 @@ export function LandingPage() {
         'Other',
     ];
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
 
@@ -84,16 +84,21 @@ export function LandingPage() {
             return;
         }
 
-        const newTenant = createTenant(formData);
-        const signInResult = signInAdmin(formData.email, formData.ownerPassword);
-        if (!signInResult.ok) {
-            navigate(`/tenant/${newTenant.slug}/admin`);
-            return;
+        try {
+            const newTenant = await createTenant(formData);
+            const signInResult = await signInAdmin(formData.email, formData.ownerPassword);
+            if (!signInResult.ok) {
+                navigate(`/tenant/${newTenant.slug}/admin`);
+                return;
+            }
+            navigate(`/tenant/${signInResult.tenantSlug}/admin`);
+        } catch (err) {
+            console.error('Tenant creation failed:', err);
+            setError('Failed to create tenant. Please try again.');
         }
-        navigate(`/tenant/${signInResult.tenantSlug}/admin`);
     };
 
-    const handleAdminSignIn = (e: React.FormEvent) => {
+    const handleAdminSignIn = async (e: React.FormEvent) => {
         e.preventDefault();
         setAuthError('');
 
@@ -102,7 +107,7 @@ export function LandingPage() {
             return;
         }
 
-        const result = signInAdmin(adminLogin.email, adminLogin.password);
+        const result = await signInAdmin(adminLogin.email, adminLogin.password);
         if (!result.ok || !result.tenantSlug) {
             setAuthError(result.error || 'Unable to sign in.');
             return;
@@ -113,7 +118,7 @@ export function LandingPage() {
         navigate(`/tenant/${result.tenantSlug}/admin`);
     };
 
-    const handleCustomerSignIn = (e: React.FormEvent) => {
+    const handleCustomerSignIn = async (e: React.FormEvent) => {
         e.preventDefault();
         setAuthError('');
 
@@ -122,7 +127,7 @@ export function LandingPage() {
             return;
         }
 
-        const result = signInCustomer(customerLogin.tenantSlug, customerLogin.email, customerLogin.password);
+        const result = await signInCustomer(customerLogin.tenantSlug, customerLogin.email, customerLogin.password);
         if (!result.ok) {
             setAuthError(result.error || 'Unable to sign in.');
             return;
@@ -133,7 +138,7 @@ export function LandingPage() {
         navigate(`/tenant/${customerLogin.tenantSlug}`);
     };
 
-    const handleCustomerSignUp = (e: React.FormEvent) => {
+    const handleCustomerSignUp = async (e: React.FormEvent) => {
         e.preventDefault();
         setAuthError('');
 
@@ -142,7 +147,7 @@ export function LandingPage() {
             return;
         }
 
-        const result = signUpCustomer(customerSignup);
+        const result = await signUpCustomer(customerSignup);
         if (!result.ok) {
             setAuthError(result.error || 'Unable to create account.');
             return;
