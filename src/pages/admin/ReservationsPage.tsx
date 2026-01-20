@@ -28,7 +28,7 @@ export function ReservationsPage() {
             const query = searchQuery.toLowerCase();
             filtered = filtered.filter(r =>
                 r.customerName.toLowerCase().includes(query) ||
-                r.customerEmail.toLowerCase().includes(query) ||
+                r.customerEmail?.toLowerCase().includes(query) ||
                 r.customerPhone.includes(query)
             );
         }

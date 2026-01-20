@@ -26,7 +26,7 @@ export function useReservations() {
 
     const getReservationsByEmail = (email: string, tenantId?: string): Reservation[] => {
         return getReservationsForTenant(tenantId).filter(
-            (r) => r.customerEmail.toLowerCase() === email.toLowerCase()
+            (r) => r.customerEmail?.toLowerCase() === email.toLowerCase()
         );
     };
 
