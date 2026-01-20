@@ -57,12 +57,53 @@ export function BookingFormPage() {
         );
     }
 
+    // Check if user is logged in
+    const isLoggedIn = session?.role === 'customer' && session.tenantId === currentTenant.id;
+
+    // If not logged in, show sign-in prompt
+    if (!isLoggedIn) {
+        return (
+            <div className="booking-form-page">
+                <div className="form-container">
+                    <div className="form-header">
+                        <button className="back-btn" onClick={() => navigate(`/tenant/${tenantSlug}`)}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M19 12H5M12 19l-7-7 7-7" />
+                            </svg>
+                            Back
+                        </button>
+                        <h1>Sign In Required</h1>
+                    </div>
+
+                    <div className="booking-summary">
+                        <div className="summary-icon">📅</div>
+                        <div className="summary-details">
+                            <span className="summary-date">{format(parseISO(slot.date), 'EEEE, MMMM d, yyyy')}</span>
+                            <span className="summary-time">{slot.startTime} - {slot.endTime}</span>
+                        </div>
+                    </div>
+
+                    <div className="login-prompt">
+                        <p>Please sign in to confirm your booking for this time slot.</p>
+                        <button
+                            className="btn btn-primary btn-large btn-full"
+                            onClick={() => navigate(`/?signin=user&tenant=${tenantSlug}&redirect=/tenant/${tenantSlug}/book/${slotId}`)}
+                        >
+                            Sign In to Continue
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
 
-        if (!formData.customerName || !formData.customerEmail || !formData.customerPhone) {
-            setError('Please fill in all required fields.');
+        // Only name and phone are required, email is optional
+        if (!formData.customerName || !formData.customerPhone) {
+            setError('Please fill in your name and phone number.');
             return;
         }
 
@@ -71,7 +112,7 @@ export function BookingFormPage() {
         // Simulate API delay
         await new Promise(resolve => setTimeout(resolve, 500));
 
-        const reservation = createReservation({
+        const reservation = await createReservation({
             timeSlotId: slot.id,
             customerName: formData.customerName,
             customerEmail: formData.customerEmail,
@@ -127,14 +168,13 @@ export function BookingFormPage() {
                     </div>
 
                     <div className="form-group">
-                        <label htmlFor="email">Email Address *</label>
+                        <label htmlFor="email">Email Address (Optional)</label>
                         <input
                             type="email"
                             id="email"
                             value={formData.customerEmail}
                             onChange={(e) => setFormData({ ...formData, customerEmail: e.target.value })}
                             placeholder="john@example.com"
-                            required
                         />
                     </div>
 
@@ -170,7 +210,7 @@ export function BookingFormPage() {
                     </button>
 
                     <p className="form-disclaimer">
-                        By booking, you agree to receive appointment reminders via email and SMS.
+                        By booking, you agree to receive appointment reminders via SMS{formData.customerEmail ? ' and email' : ''}.
                     </p>
                 </form>
             </div>

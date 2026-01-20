@@ -7,6 +7,7 @@ import { AdminLayout } from './components/admin/AdminLayout';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { ReservationsPage } from './pages/admin/ReservationsPage';
 import { TimeSlotsPage } from './pages/admin/TimeSlotsPage';
+import { SettingsPage } from './pages/admin/SettingsPage';
 import { UserLayout } from './components/user/UserLayout';
 import { UserBookingPage } from './pages/user/UserBookingPage';
 import { BookingFormPage } from './pages/user/BookingFormPage';
@@ -28,6 +29,7 @@ function App() {
                 <Route index element={<AdminDashboard />} />
                 <Route path="reservations" element={<ReservationsPage />} />
                 <Route path="slots" element={<TimeSlotsPage />} />
+                <Route path="settings" element={<SettingsPage />} />
               </Route>
 
               {/* User Panel Routes */}

@@ -1,6 +1,21 @@
 .user-booking-page {
     max-width: 1000px;
     margin: 0 auto;
+    position: relative;
+}
+
+.page-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.2;
+    z-index: -1;
+    pointer-events: none;
 }
 
 .booking-header {

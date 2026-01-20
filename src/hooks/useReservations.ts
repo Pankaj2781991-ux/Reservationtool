@@ -1,6 +1,11 @@
 import { useTenant } from '../context/TenantContext';
 import type { Reservation, ReservationStatus } from '../types';
 import { generateId } from '../data/mockData';
+import {
+    createReservationBatched,
+    updateReservationStatusBatched,
+    cancelReservationBatched
+} from '../firebase/firestoreService';
 
 export function useReservations() {
     const { currentTenant, appData, updateAppData } = useTenant();
@@ -25,19 +30,21 @@ export function useReservations() {
         );
     };
 
-    const createReservation = (
+    const createReservation = async (
         data: Omit<Reservation, 'id' | 'tenantId' | 'createdAt' | 'status'>
-    ): Reservation | null => {
+    ): Promise<Reservation | null> => {
         if (!currentTenant) return null;
 
+        const reservationId = generateId();
         const newReservation: Reservation = {
             ...data,
-            id: generateId(),
+            id: reservationId,
             tenantId: currentTenant.id,
             createdAt: new Date(),
             status: 'pending',
         };
 
+        // Optimistic update - update local state immediately
         updateAppData((prev) => {
             // Update the time slot's booked count
             const updatedSlots = prev.timeSlots.map((slot) =>
@@ -53,35 +60,73 @@ export function useReservations() {
             };
         });
 
+        // Batched write to Firestore (async, non-blocking)
+        try {
+            await createReservationBatched(
+                {
+                    ...data,
+                    tenantId: currentTenant.id,
+                    status: 'pending',
+                },
+                data.timeSlotId
+            );
+            console.log('✅ Reservation synced to Firestore');
+        } catch (error) {
+            console.error('Failed to sync reservation to Firestore:', error);
+            // Note: In production, you might want to rollback the optimistic update
+        }
+
         return newReservation;
     };
 
-    const updateReservationStatus = (reservationId: string, status: ReservationStatus): void => {
+    const updateReservationStatus = async (reservationId: string, status: ReservationStatus): Promise<void> => {
+        if (!currentTenant) return;
+
+        // Optimistic update
         updateAppData((prev) => ({
             ...prev,
             reservations: prev.reservations.map((r) =>
                 r.id === reservationId ? { ...r, status } : r
             ),
         }));
+
+        // Sync to Firestore
+        try {
+            await updateReservationStatusBatched(reservationId, status, currentTenant.id);
+        } catch (error) {
+            console.error('Failed to sync status update to Firestore:', error);
+        }
     };
 
-    const cancelReservation = (reservationId: string): void => {
-        updateAppData((prev) => {
-            const reservation = prev.reservations.find((r) => r.id === reservationId);
-            if (!reservation) return prev;
+    const cancelReservation = async (reservationId: string): Promise<void> => {
+        if (!currentTenant) return;
 
-            return {
-                ...prev,
-                reservations: prev.reservations.map((r) =>
-                    r.id === reservationId ? { ...r, status: 'cancelled' as ReservationStatus } : r
-                ),
-                timeSlots: prev.timeSlots.map((slot) =>
-                    slot.id === reservation.timeSlotId
-                        ? { ...slot, bookedCount: Math.max(0, slot.bookedCount - 1) }
-                        : slot
-                ),
-            };
-        });
+        const reservation = appData.reservations.find((r) => r.id === reservationId);
+        if (!reservation) return;
+
+        // Optimistic update
+        updateAppData((prev) => ({
+            ...prev,
+            reservations: prev.reservations.map((r) =>
+                r.id === reservationId ? { ...r, status: 'cancelled' as ReservationStatus } : r
+            ),
+            timeSlots: prev.timeSlots.map((slot) =>
+                slot.id === reservation.timeSlotId
+                    ? { ...slot, bookedCount: Math.max(0, slot.bookedCount - 1) }
+                    : slot
+            ),
+        }));
+
+        // Batched write to Firestore
+        try {
+            await cancelReservationBatched(
+                reservationId,
+                reservation.timeSlotId,
+                currentTenant.id
+            );
+        } catch (error) {
+            console.error('Failed to sync cancellation to Firestore:', error);
+        }
     };
 
     return {
@@ -94,3 +139,4 @@ export function useReservations() {
         cancelReservation,
     };
 }
+

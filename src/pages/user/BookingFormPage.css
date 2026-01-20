@@ -44,8 +44,8 @@
     align-items: center;
     gap: 1rem;
     padding: 1.25rem;
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(139, 92, 246, 0.05));
-    border: 1px solid rgba(139, 92, 246, 0.2);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+    border: 1px solid rgba(59, 130, 246, 0.2);
     border-radius: 1rem;
     margin-bottom: 2rem;
 }
@@ -122,7 +122,7 @@
 .form-group textarea:focus {
     outline: none;
     border-color: var(--tenant-color, var(--primary-color));
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 .form-group input::placeholder,
@@ -145,13 +145,13 @@
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--tenant-color, var(--primary-color)), var(--secondary-color));
+    background: var(--tenant-color, var(--primary-color));
     color: white;
 }
 
 .btn-primary:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.4);
+    box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.4);
 }
 
 .btn-primary:disabled {
@@ -205,4 +205,22 @@
     .form-container {
         padding: 1.5rem;
     }
+}
+
+.login-prompt {
+    text-align: center;
+    padding: 2rem;
+    background: var(--bg-tertiary);
+    border-radius: 1rem;
+    margin-top: 1.5rem;
+}
+
+.login-prompt p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+}
+
+.login-prompt .btn {
+    margin-top: 0.5rem;
 }

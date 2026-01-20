@@ -113,10 +113,12 @@ export function AdminDashboard() {
                             <span className="action-icon">📋</span>
                             <span className="action-label">View All Reservations</span>
                         </Link>
-                        <Link to={`/tenant/${tenantSlug}`} className="action-card">
-                            <span className="action-icon">👤</span>
-                            <span className="action-label">View User Panel</span>
-                        </Link>
+                        {currentTenant.isDemo && (
+                            <Link to={`/tenant/${tenantSlug}`} className="action-card">
+                                <span className="action-icon">👤</span>
+                                <span className="action-label">View User Panel</span>
+                            </Link>
+                        )}
                     </div>
                 </div>
             </div>

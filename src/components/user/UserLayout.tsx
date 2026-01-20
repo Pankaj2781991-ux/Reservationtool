@@ -27,14 +27,21 @@ export function UserLayout() {
 
     const basePath = `/tenant/${tenantSlug}`;
     const isCustomer = currentTenant.isDemo || (session?.role === 'customer' && session.tenantId === currentTenant.id);
+    const isDemoTenant = currentTenant.isDemo;
 
     return (
         <div className="user-layout" style={{ '--tenant-color': currentTenant.settings.primaryColor } as React.CSSProperties}>
             <header className="user-header">
                 <div className="header-container">
                     <NavLink to={basePath} className="business-brand">
-                        <span className="brand-icon">📅</span>
-                        <span className="brand-name">{currentTenant.businessName}</span>
+                        {currentTenant.settings.logoUrl ? (
+                            <img src={currentTenant.settings.logoUrl} alt={currentTenant.businessName} className="brand-logo" />
+                        ) : (
+                            <>
+                                <span className="brand-icon">📅</span>
+                                <span className="brand-name">{currentTenant.businessName}</span>
+                            </>
+                        )}
                     </NavLink>
 
                     <nav className="user-nav">
@@ -57,9 +64,11 @@ export function UserLayout() {
                                 Sign In
                             </NavLink>
                         )}
-                        <NavLink to={`${basePath}/admin`} className="admin-link">
-                            Admin
-                        </NavLink>
+                        {isDemoTenant && (
+                            <NavLink to={`${basePath}/admin`} className="admin-link">
+                                Admin
+                            </NavLink>
+                        )}
                     </div>
                 </div>
             </header>

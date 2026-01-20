@@ -30,6 +30,8 @@ export interface TenantSettings {
   workingHoursStart: string; // "09:00"
   workingHoursEnd: string; // "17:00"
   workingDays: number[]; // 0-6, where 0 is Sunday
+  logoUrl?: string;
+  backgroundUrl?: string;
 }
 
 export interface TimeSlot {
@@ -50,7 +52,7 @@ export interface Reservation {
   tenantId: string;
   timeSlotId: string;
   customerName: string;
-  customerEmail: string;
+  customerEmail?: string;
   customerPhone: string;
   notes?: string;
   status: ReservationStatus;

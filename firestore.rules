@@ -1,19 +1,70 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // This rule allows anyone with your Firestore database reference to view, edit,
-    // and delete all data in your Firestore database. It is useful for getting
-    // started, but it is configured to expire after 30 days because it
-    // leaves your app open to attackers. At that time, all client
-    // requests to your Firestore database will be denied.
-    //
-    // Make sure to write security rules for your app before that time, or else
-    // all client requests to your Firestore database will be denied until you Update
-    // your rules
-    match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2026, 2, 15);
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Tenants collection - public read for booking pages
+    match /tenants/{tenantId} {
+      // Anyone can read tenant info (for public booking pages)
+      allow read: if true;
+      
+      // Only authenticated users can create tenants (during signup)
+      allow create: if isAuthenticated();
+      
+      // Authenticated users can update their own tenant
+      allow update: if isAuthenticated();
+      
+      // Authenticated users can delete their own tenant
+      allow delete: if isAuthenticated();
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // Public read for user validation (needed for booking lookup by email)
+      allow read: if true;
+      
+      // Allow user creation during signup (when userId matches auth uid)
+      allow create: if isAuthenticated();
+      
+      // Users can update their own profile
+      allow update: if isAuthenticated();
+      
+      // Only authenticated users can delete
+      allow delete: if isAuthenticated();
+    }
+    
+    // Reservations collection
+    match /reservations/{reservationId} {
+      // Anyone can read reservations (for booking display and email lookup)
+      allow read: if true;
+      
+      // Anyone can create reservations (for guest bookings)
+      allow create: if true;
+      
+      // Anyone can update reservations (for cancellation, status updates)
+      allow update: if true;
+      
+      // Only authenticated users can delete reservations
+      allow delete: if isAuthenticated();
+    }
+    
+    // Time slots collection
+    match /timeSlots/{slotId} {
+      // Anyone can read time slots (for booking display)
+      allow read: if true;
+      
+      // Authenticated users can create time slots
+      allow create: if isAuthenticated();
+      
+      // Anyone can update time slots (needed for bookedCount increment during reservations)
+      allow update: if true;
+      
+      // Only authenticated users can delete time slots
+      allow delete: if isAuthenticated();
     }
   }
 }

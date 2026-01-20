@@ -286,7 +286,7 @@ export function LandingPage() {
                         Explore how ReserveHub works with these sample businesses
                     </p>
                     <div className="demo-grid">
-                        {allTenants.map((tenant) => (
+                        {allTenants.filter(tenant => tenant.isDemo).map((tenant) => (
                             <div key={tenant.id} className="demo-card">
                                 <div className="demo-card-header" style={{ backgroundColor: tenant.settings.primaryColor }}>
                                     <span className="demo-icon">

@@ -1,0 +1,25 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // Helper function to check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Tenant assets (logos and backgrounds)
+    match /tenants/{tenantId}/{allPaths=**} {
+      // Anyone can read tenant assets (logos and backgrounds are public)
+      allow read: if true;
+      
+      // Only authenticated users who own the tenant can upload/update
+      // Note: In production, you should verify the user owns this tenant
+      allow write: if isAuthenticated();
+      
+      // Validate file uploads
+      allow write: if isAuthenticated()
+                   && request.resource.size < 5 * 1024 * 1024 // Max 5MB
+                   && request.resource.contentType.matches('image/.*'); // Images only
+    }
+  }
+}

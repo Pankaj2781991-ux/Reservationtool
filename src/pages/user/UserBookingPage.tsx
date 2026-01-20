@@ -30,6 +30,12 @@ export function UserBookingPage() {
 
     return (
         <div className="user-booking-page">
+            {currentTenant.settings.backgroundUrl && (
+                <div
+                    className="page-background"
+                    style={{ backgroundImage: `url(${currentTenant.settings.backgroundUrl})` }}
+                />
+            )}
             <div className="booking-header">
                 <h1>Book an Appointment</h1>
                 <p>Select a date and time that works for you</p>

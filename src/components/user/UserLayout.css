@@ -45,6 +45,13 @@
     font-size: 1.5rem;
 }
 
+.brand-logo {
+    height: 36px;
+    width: auto;
+    max-width: 100px;
+    object-fit: contain;
+}
+
 .brand-name {
     font-size: 1.25rem;
     font-weight: 700;
