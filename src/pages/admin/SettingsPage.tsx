@@ -11,6 +11,8 @@ export function SettingsPage() {
 
     const [logoUrl, setLogoUrl] = useState(currentTenant?.settings.logoUrl || '');
     const [backgroundUrl, setBackgroundUrl] = useState(currentTenant?.settings.backgroundUrl || '');
+    const [publicPhone, setPublicPhone] = useState(currentTenant?.settings.publicPhone || '');
+    const [publicEmail, setPublicEmail] = useState(currentTenant?.settings.publicEmail || '');
     const [uploading, setUploading] = useState<'logo' | 'background' | null>(null);
     const [uploadProgress, setUploadProgress] = useState<string>('');
     const [saving, setSaving] = useState(false);
@@ -111,8 +113,10 @@ export function SettingsPage() {
         try {
             const updatedSettings = {
                 ...currentTenant.settings,
-                logoUrl: logoUrl || null,
-                backgroundUrl: backgroundUrl || null,
+                logoUrl: logoUrl || undefined,
+                backgroundUrl: backgroundUrl || undefined,
+                publicPhone: publicPhone || undefined,
+                publicEmail: publicEmail || undefined,
             };
 
             // Update Firestore
@@ -243,6 +247,33 @@ export function SettingsPage() {
                                 </>
                             )}
                         </div>
+                    </div>
+                </div>
+
+                <div className="contact-settings">
+                    <h3>Footer Contact Info</h3>
+                    <p>Optional contact information displayed in the footer of your booking page.</p>
+
+                    <div className="form-group">
+                        <label htmlFor="publicPhone">Phone Number</label>
+                        <input
+                            id="publicPhone"
+                            type="tel"
+                            value={publicPhone}
+                            onChange={(e) => setPublicPhone(e.target.value)}
+                            placeholder="e.g., +1 234 567 8900"
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="publicEmail">Email Address</label>
+                        <input
+                            id="publicEmail"
+                            type="email"
+                            value={publicEmail}
+                            onChange={(e) => setPublicEmail(e.target.value)}
+                            placeholder="e.g., contact@yourbusiness.com"
+                        />
                     </div>
                 </div>
 

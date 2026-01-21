@@ -41,7 +41,7 @@ export function AdminLayout() {
         );
     }
 
-    const basePath = `/tenant/${tenantSlug}/admin`;
+    const basePath = `/${tenantSlug}/admin`;
 
     return (
         <div className="admin-layout">
@@ -52,8 +52,21 @@ export function AdminLayout() {
                         <span className="logo-text">ReserveHub</span>
                     </div>
                     <div className="tenant-badge">
-                        <span className="tenant-name">{currentTenant.businessName}</span>
-                        <span className="tenant-type">{currentTenant.serviceType}</span>
+                        {currentTenant.settings.logoUrl ? (
+                            <img
+                                src={currentTenant.settings.logoUrl}
+                                alt={`${currentTenant.businessName} logo`}
+                                className="tenant-logo"
+                            />
+                        ) : (
+                            <div className="tenant-logo-placeholder">
+                                {currentTenant.businessName.charAt(0).toUpperCase()}
+                            </div>
+                        )}
+                        <div className="tenant-info">
+                            <span className="tenant-name">{currentTenant.businessName}</span>
+                            <span className="tenant-type">{currentTenant.serviceType}</span>
+                        </div>
                     </div>
                 </div>
 
@@ -92,7 +105,7 @@ export function AdminLayout() {
 
                 <div className="sidebar-footer">
                     {isDemoTenant && (
-                        <NavLink to={`/tenant/${tenantSlug}`} className="nav-item user-panel-link">
+                        <NavLink to={`/${tenantSlug}`} className="nav-item user-panel-link">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3" />
                             </svg>

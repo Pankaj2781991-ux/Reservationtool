@@ -49,7 +49,7 @@ export function BookingFormPage() {
                     <span className="error-icon">⚠️</span>
                     <h2>Slot Not Found</h2>
                     <p>The selected time slot is no longer available.</p>
-                    <button className="btn btn-primary" onClick={() => navigate(`/tenant/${tenantSlug}`)}>
+                    <button className="btn btn-primary" onClick={() => navigate(`/${tenantSlug}`)}>
                         Back to Booking
                     </button>
                 </div>
@@ -66,7 +66,7 @@ export function BookingFormPage() {
             <div className="booking-form-page">
                 <div className="form-container">
                     <div className="form-header">
-                        <button className="back-btn" onClick={() => navigate(`/tenant/${tenantSlug}`)}>
+                        <button className="back-btn" onClick={() => navigate(`/${tenantSlug}`)}>
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                 <path d="M19 12H5M12 19l-7-7 7-7" />
                             </svg>
@@ -87,7 +87,7 @@ export function BookingFormPage() {
                         <p>Please sign in to confirm your booking for this time slot.</p>
                         <button
                             className="btn btn-primary btn-large btn-full"
-                            onClick={() => navigate(`/?signin=user&tenant=${tenantSlug}&redirect=/tenant/${tenantSlug}/book/${slotId}`)}
+                            onClick={() => navigate(`/?signin=user&tenant=${tenantSlug}&redirect=/${tenantSlug}/book/${slotId}`)}
                         >
                             Sign In to Continue
                         </button>
@@ -124,7 +124,7 @@ export function BookingFormPage() {
         });
 
         if (reservation) {
-            navigate(`/tenant/${tenantSlug}/my-bookings?success=true`);
+            navigate(`/${tenantSlug}/my-bookings?success=true`);
         } else {
             setError('Failed to create reservation. Please try again.');
             setIsSubmitting(false);
@@ -135,7 +135,7 @@ export function BookingFormPage() {
         <div className="booking-form-page">
             <div className="form-container">
                 <div className="form-header">
-                    <button className="back-btn" onClick={() => navigate(`/tenant/${tenantSlug}`)}>
+                    <button className="back-btn" onClick={() => navigate(`/${tenantSlug}`)}>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <path d="M19 12H5M12 19l-7-7 7-7" />
                         </svg>

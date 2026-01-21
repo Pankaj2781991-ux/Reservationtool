@@ -25,7 +25,7 @@ function App() {
               <Route path="/" element={<LandingPage />} />
 
               {/* Admin Panel Routes */}
-              <Route path="/tenant/:tenantSlug/admin" element={<AdminLayout />}>
+              <Route path="/:tenantSlug/admin" element={<AdminLayout />}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="reservations" element={<ReservationsPage />} />
                 <Route path="slots" element={<TimeSlotsPage />} />
@@ -33,7 +33,7 @@ function App() {
               </Route>
 
               {/* User Panel Routes */}
-              <Route path="/tenant/:tenantSlug" element={<UserLayout />}>
+              <Route path="/:tenantSlug" element={<UserLayout />}>
                 <Route index element={<UserBookingPage />} />
                 <Route path="book/:slotId" element={<BookingFormPage />} />
                 <Route path="my-bookings" element={<MyBookingsPage />} />

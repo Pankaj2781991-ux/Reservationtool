@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
 import type { Tenant, TenantSubscription, TenantUser } from '../types';
-import { loadData, saveData, generateSlug } from '../data/mockData';
+import { loadData, saveData, generateSlug, defaultTenants } from '../data/mockData';
 import type { AppData } from '../data/mockData';
 import { db, auth } from '../firebase/firebase';
 import {
@@ -15,6 +15,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 interface TenantContextType {
     currentTenant: Tenant | null;
     allTenants: Tenant[];
+    demoTenants: Tenant[];
     setCurrentTenantBySlug: (slug: string) => void;
     createTenant: (data: Omit<Tenant, 'id' | 'slug' | 'createdAt' | 'settings' | 'subscription' | 'ownerUserId'> & {
         ownerName: string;
@@ -29,6 +30,7 @@ const TenantContext = createContext<TenantContextType | undefined>(undefined);
 export function TenantProvider({ children }: { children: ReactNode }) {
     const [appData, setAppData] = useState<AppData>(() => loadData());
     const [currentTenant, setCurrentTenant] = useState<Tenant | null>(null);
+    const [demoTenants] = useState<Tenant[]>(defaultTenants);
 
     useEffect(() => {
         saveData(appData);
@@ -76,7 +78,9 @@ export function TenantProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const setCurrentTenantBySlug = (slug: string) => {
-        const tenant = appData.tenants.find((t) => t.slug === slug) || null;
+        const tenant = demoTenants.find((t) => t.slug === slug) ||
+            appData.tenants.find((t) => t.slug === slug) ||
+            null;
         setCurrentTenant(tenant);
     };
 
@@ -171,6 +175,7 @@ export function TenantProvider({ children }: { children: ReactNode }) {
             value={{
                 currentTenant,
                 allTenants: appData.tenants,
+                demoTenants,
                 setCurrentTenantBySlug,
                 createTenant,
                 appData,

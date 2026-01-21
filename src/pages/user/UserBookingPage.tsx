@@ -25,7 +25,7 @@ export function UserBookingPage() {
     }
 
     const handleSelectSlot = (slotId: string) => {
-        navigate(`/tenant/${tenantSlug}/book/${slotId}`);
+        navigate(`/${tenantSlug}/book/${slotId}`);
     };
 
     return (

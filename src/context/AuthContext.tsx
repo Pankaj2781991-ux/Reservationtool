@@ -47,7 +47,7 @@ function isSubscriptionActive(subscription: TenantSubscription): boolean {
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const { appData, updateAppData } = useTenant();
+    const { appData, demoTenants, updateAppData } = useTenant();
     const [session, setSession] = useState<AuthSession | null>(() => {
         const stored = localStorage.getItem(SESSION_KEY);
         return stored ? (JSON.parse(stored) as AuthSession) : null;
@@ -133,7 +133,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 return { ok: false, error: 'Customer account not found.' };
             }
 
-            const tenant = appData.tenants.find((t) => t.slug === tenantSlug) || await fetchTenantById(user.tenantId);
+            const tenant = demoTenants.find((t) => t.slug === tenantSlug) ||
+                appData.tenants.find((t) => t.slug === tenantSlug) ||
+                await fetchTenantById(user.tenantId);
             if (!tenant || tenant.id !== user.tenantId) {
                 return { ok: false, error: 'Tenant not found.' };
             }
@@ -157,7 +159,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         password: string;
     }) => {
         try {
-            const tenant = appData.tenants.find((t) => t.slug === data.tenantSlug);
+            const tenant = demoTenants.find((t) => t.slug === data.tenantSlug) ||
+                appData.tenants.find((t) => t.slug === data.tenantSlug);
             if (!tenant) {
                 return { ok: false, error: 'Tenant not found.' };
             }

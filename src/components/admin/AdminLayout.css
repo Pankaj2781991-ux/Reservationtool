@@ -80,6 +80,38 @@
     border: 1px solid var(--border-color);
     border-radius: 0.75rem;
     padding: 0.75rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.tenant-logo {
+    max-width: 100px;
+    max-height: 40px;
+    width: auto;
+    height: auto;
+    border-radius: 0.5rem;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.tenant-logo-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 0.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.tenant-info {
+    flex: 1;
+    min-width: 0;
 }
 
 .tenant-name {
@@ -88,6 +120,9 @@
     color: var(--text-primary);
     font-size: 0.875rem;
     margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .tenant-type {

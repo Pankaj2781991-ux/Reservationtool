@@ -32,6 +32,8 @@ export interface TenantSettings {
   workingDays: number[]; // 0-6, where 0 is Sunday
   logoUrl?: string;
   backgroundUrl?: string;
+  publicPhone?: string; // Contact phone shown in user footer
+  publicEmail?: string; // Contact email shown in user footer
 }
 
 export interface TimeSlot {

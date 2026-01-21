@@ -3,6 +3,42 @@
     display: flex;
     flex-direction: column;
     background: var(--bg-primary);
+    position: relative;
+}
+
+/* Background image support */
+.user-layout.has-background {
+    background: transparent;
+}
+
+.user-layout.has-background::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: var(--bg-image);
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    z-index: -2;
+    pointer-events: none;
+}
+
+/* Overlay for readability when background is present */
+.user-layout.has-background::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-primary);
+    opacity: 0.2;
+    z-index: -1;
+    pointer-events: none;
 }
 
 .user-loading {
@@ -166,6 +202,23 @@
     color: var(--text-tertiary);
 }
 
+.footer-business {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.footer-business-name {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--text-primary);
+}
+
+.footer-powered {
+    font-size: 0.75rem;
+    color: var(--text-tertiary);
+}
+
 @media (max-width: 768px) {
     .header-container {
         flex-wrap: wrap;
@@ -182,5 +235,9 @@
         flex-direction: column;
         gap: 1rem;
         text-align: center;
+    }
+
+    .footer-business {
+        align-items: center;
     }
 }

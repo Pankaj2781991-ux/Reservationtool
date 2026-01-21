@@ -25,12 +25,19 @@ export function UserLayout() {
         );
     }
 
-    const basePath = `/tenant/${tenantSlug}`;
+    const basePath = `/${tenantSlug}`;
     const isCustomer = currentTenant.isDemo || (session?.role === 'customer' && session.tenantId === currentTenant.id);
     const isDemoTenant = currentTenant.isDemo;
 
+    const backgroundStyle: React.CSSProperties = {
+        '--tenant-color': currentTenant.settings.primaryColor,
+        ...(currentTenant.settings.backgroundUrl && {
+            '--bg-image': `url(${currentTenant.settings.backgroundUrl})`,
+        }),
+    } as React.CSSProperties;
+
     return (
-        <div className="user-layout" style={{ '--tenant-color': currentTenant.settings.primaryColor } as React.CSSProperties}>
+        <div className={`user-layout ${currentTenant.settings.backgroundUrl ? 'has-background' : ''}`} style={backgroundStyle}>
             <header className="user-header">
                 <div className="header-container">
                     <NavLink to={basePath} className="business-brand">
@@ -79,13 +86,16 @@ export function UserLayout() {
 
             <footer className="user-footer">
                 <div className="footer-container">
-                    <p className="footer-text">
-                        Powered by <span className="footer-brand">ReserveHub</span>
-                    </p>
-                    <div className="footer-contact">
-                        {currentTenant.phone && <span>{currentTenant.phone}</span>}
-                        <span>{currentTenant.email}</span>
+                    <div className="footer-business">
+                        <span className="footer-business-name">{currentTenant.businessName}</span>
+                        <span className="footer-powered">Powered by <span className="footer-brand">ReserveHub</span></span>
                     </div>
+                    {(currentTenant.settings.publicPhone || currentTenant.settings.publicEmail) && (
+                        <div className="footer-contact">
+                            {currentTenant.settings.publicPhone && <span>{currentTenant.settings.publicPhone}</span>}
+                            {currentTenant.settings.publicEmail && <span>{currentTenant.settings.publicEmail}</span>}
+                        </div>
+                    )}
                 </div>
             </footer>
         </div>

@@ -68,7 +68,7 @@ export function AdminDashboard() {
                 <div className="dashboard-section">
                     <div className="section-header">
                         <h3>Upcoming Reservations</h3>
-                        <Link to={`/tenant/${tenantSlug}/admin/reservations`} className="section-link">
+                        <Link to={`/${tenantSlug}/admin/reservations`} className="section-link">
                             View All
                         </Link>
                     </div>
@@ -105,16 +105,16 @@ export function AdminDashboard() {
                         <h3>Quick Actions</h3>
                     </div>
                     <div className="quick-actions">
-                        <Link to={`/tenant/${tenantSlug}/admin/slots`} className="action-card">
+                        <Link to={`/${tenantSlug}/admin/slots`} className="action-card">
                             <span className="action-icon">⏰</span>
                             <span className="action-label">Manage Time Slots</span>
                         </Link>
-                        <Link to={`/tenant/${tenantSlug}/admin/reservations`} className="action-card">
+                        <Link to={`/${tenantSlug}/admin/reservations`} className="action-card">
                             <span className="action-icon">📋</span>
                             <span className="action-label">View All Reservations</span>
                         </Link>
                         {currentTenant.isDemo && (
-                            <Link to={`/tenant/${tenantSlug}`} className="action-card">
+                            <Link to={`/${tenantSlug}`} className="action-card">
                                 <span className="action-icon">👤</span>
                                 <span className="action-label">View User Panel</span>
                             </Link>

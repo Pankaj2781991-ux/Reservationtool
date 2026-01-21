@@ -4,7 +4,7 @@ import { format, addDays } from 'date-fns';
 const STORAGE_KEY = 'reservation_app_data';
 
 // Default tenants for demo
-const defaultTenants: Tenant[] = [
+export const defaultTenants: Tenant[] = [
     {
         id: 'tenant-1',
         slug: 'demo-salon',
@@ -82,7 +82,7 @@ const defaultTenants: Tenant[] = [
     },
 ];
 
-const defaultUsers: TenantUser[] = [
+export const defaultUsers: TenantUser[] = [
     {
         id: 'user-admin-1',
         tenantId: 'tenant-1',
@@ -279,9 +279,13 @@ export function loadData(): AppData {
     } catch (e) {
         console.error('Failed to load data from localStorage:', e);
     }
-    const defaultData = getDefaultData();
-    saveData(defaultData);
-    return defaultData;
+    // Return empty app data structure, TenantContext will handle demo tenants separately
+    return {
+        tenants: [],
+        timeSlots: [],
+        reservations: [],
+        users: [],
+    };
 }
 
 export function saveData(data: AppData): void {

@@ -8,7 +8,7 @@ import './LandingPage.css';
 export function LandingPage() {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
-    const { allTenants, createTenant } = useTenant();
+    const { allTenants, demoTenants, createTenant } = useTenant();
     const { signInAdmin, signInCustomer, signUpCustomer } = useAuth();
     const [showForm, setShowForm] = useState(false);
     const [showAuth, setShowAuth] = useState(false);
@@ -89,10 +89,10 @@ export function LandingPage() {
             const newTenant = await createTenant(formData);
             const signInResult = await signInAdmin(formData.email, formData.ownerPassword);
             if (!signInResult.ok) {
-                navigate(`/tenant/${newTenant.slug}/admin`);
+                navigate(`/${newTenant.slug}/admin`);
                 return;
             }
-            navigate(`/tenant/${signInResult.tenantSlug}/admin`);
+            navigate(`/${signInResult.tenantSlug}/admin`);
         } catch (err) {
             console.error('Tenant creation failed:', err);
             setError('Failed to create tenant. Please try again.');
@@ -116,7 +116,7 @@ export function LandingPage() {
 
         setShowAuth(false);
         setSearchParams({});
-        navigate(`/tenant/${result.tenantSlug}/admin`);
+        navigate(`/${result.tenantSlug}/admin`);
     };
 
     const handleCustomerSignIn = async (e: React.FormEvent) => {
@@ -136,7 +136,7 @@ export function LandingPage() {
 
         setShowAuth(false);
         setSearchParams({});
-        navigate(`/tenant/${customerLogin.tenantSlug}`);
+        navigate(`/${customerLogin.tenantSlug}`);
     };
 
     const handleCustomerSignUp = async (e: React.FormEvent) => {
@@ -156,7 +156,7 @@ export function LandingPage() {
 
         setShowAuth(false);
         setSearchParams({});
-        navigate(`/tenant/${customerSignup.tenantSlug}`);
+        navigate(`/${customerSignup.tenantSlug}`);
     };
 
     const features = [
@@ -286,7 +286,7 @@ export function LandingPage() {
                         Explore how ReserveHub works with these sample businesses
                     </p>
                     <div className="demo-grid">
-                        {allTenants.filter(tenant => tenant.isDemo).map((tenant) => (
+                        {demoTenants.map((tenant) => (
                             <div key={tenant.id} className="demo-card">
                                 <div className="demo-card-header" style={{ backgroundColor: tenant.settings.primaryColor }}>
                                     <span className="demo-icon">
@@ -302,13 +302,13 @@ export function LandingPage() {
                                     <div className="demo-actions">
                                         <button
                                             className="btn btn-primary btn-small"
-                                            onClick={() => navigate(`/tenant/${tenant.slug}`)}
+                                            onClick={() => navigate(`/${tenant.slug}`)}
                                         >
                                             User Panel
                                         </button>
                                         <button
                                             className="btn btn-secondary btn-small"
-                                            onClick={() => navigate(`/tenant/${tenant.slug}/admin`)}
+                                            onClick={() => navigate(`/${tenant.slug}/admin`)}
                                         >
                                             Admin Panel
                                         </button>
